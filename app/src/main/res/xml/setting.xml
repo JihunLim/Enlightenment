@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="음성모드">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="useSound"
+            android:summaryOff="음성모드를 사용하지 않습니다"
+            android:summaryOn="음성모드를 사용합니다"
+            android:title="음성모드 사용" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:dependency="useSound"
+            android:key="useNarration"
+            android:summary="어플 시작시 내래이션을 설정합니다"
+            android:switchTextOff="OFF"
+            android:switchTextOn="ON"
+            android:title="내래이션" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:dependency="useSound"
+            android:key="useWDSound"
+            android:summary="단어 음성모드를 설정합니다"
+            android:switchTextOff="OFF"
+            android:switchTextOn="ON"
+            android:title="단어 음성모드" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="개발자 정보">
+        <Preference
+            android:summary="개발자 정보를 확인합니다"
+            android:title="개발자 웹페이지로 이동합니다." >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://limjihun204.dothome.co.kr"
+                />
+        </Preference>
+        <Preference
+            android:summary="개발자에게 메일을 보냅니다"
+            android:title="메일 보내기" >
+            <intent
+                android:action="android.intent.action.SENDTO"
+                android:data="mailto:limjihun204@naver.com" />
+        </Preference>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="어플 정보" >\
+        <Preference
+            android:summary="애플리케이션 정보를 확인합니다"
+            android:title="어플 정보"
+            android:key="appInfo"/>
+        <Preference
+            android:title="오픈소스 라이선스"
+            android:key="opensource" />
+    </PreferenceCategory>
+</PreferenceScreen>
