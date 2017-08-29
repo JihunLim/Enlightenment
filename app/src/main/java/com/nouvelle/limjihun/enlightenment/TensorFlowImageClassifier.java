@@ -47,7 +47,7 @@ public class TensorFlowImageClassifier implements Classifier {
     private TensorFlowImageClassifier() {
     }
 
-    public static Classifier create(
+            public static Classifier create(
             AssetManager assetManager,
             String modelFilename,
             String labelFilename,
@@ -74,7 +74,7 @@ public class TensorFlowImageClassifier implements Classifier {
                     c.inferenceInterface = new TensorFlowInferenceInterface();
                     //0이면 성공
                     if (c.inferenceInterface.initializeTensorFlow(assetManager, modelFilename) != 0) {
-                        throw new RuntimeException("Initialimzing Tensorflow is failed!");
+                        throw new RuntimeException("Initializing Tensorflow is failed!");
                     }
 
                     // The shape of the output is [N, NUM_CLASSES], where N is the batch size.
