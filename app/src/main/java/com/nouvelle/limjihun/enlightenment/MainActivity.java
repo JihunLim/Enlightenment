@@ -32,17 +32,23 @@ import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnInitListener{
 
-    private static final int INPUT_SIZE = 229;//224
-    private static final int IMAGE_MEAN = 128;//117
-    private static final float IMAGE_STD = 128;//1
-    private static final String INPUT_NAME = "input";
-    private static final String OUTPUT_NAME = "output";
+    private static int INPUT_SIZE = 224;//224
+    private static int IMAGE_MEAN = 117;//117
+    private static float IMAGE_STD = 1;//1
+    private static String INPUT_NAME = "input";//input
+    private static String OUTPUT_NAME = "output";//output
+    private static int MODE = 0; //Inception v3 model
 
-//    private static final String MODEL_FILE = "file:///android_asset/tensorflow_inception_graph.pb";
-//    private static final String LABEL_FILE = "file:///android_asset/imagenet_comp_graph_label_strings.txt";
+    /*
+    *MODEL_FILE, LABEL_FILE are GOOGLE Inception v3 image recognition model & label -> MODE 1
+    *CUSTOM_MODEL_FILE, CUSTOM_LABEL_FILE  are Custom image recognition model & label about stuffs in the Korean house -> MODE 2
+     */
 
-    private static final String MODEL_FILE = "file:///android_asset/output_graph.pb";
-    private static final String LABEL_FILE = "file:///android_asset/output_labels.txt";
+    private static String MODEL_FILE = "file:///android_asset/tensorflow_inception_graph.pb";
+    private static String LABEL_FILE = "file:///android_asset/imagenet_comp_graph_label_strings.txt";
+
+    private static final String CUSTOM_MODEL_FILE = "file:///android_asset/optimized_graph.pb";
+    private static final String CUSTOM_LABEL_FILE = "file:///android_asset/retrained_labels.txt";
 
     private Classifier classifier;
     private Executor executor = Executors.newSingleThreadExecutor();
@@ -54,12 +60,14 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
     private TextView textKRViewResult;
 
     private TextToSpeech myTTS;
-
+    SharedPreferences pref;
     private Boolean isUseSound = true;
     private Boolean isUseNarration = true;
     private Boolean isUseWDSound = true;
+    private int whichLanguage;
+    private int whichMode;
 
-    @Override
+
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
 
@@ -75,6 +83,9 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+
+//        Intent SettingActivity = new Intent(this, SettingsActivity.class);
+//        startActivity(SettingActivity);
         return true;
     }
 
@@ -82,19 +93,20 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SharedPreferences pref = getSharedPreferences("settings", 0);
+        pref = getSharedPreferences("settings", 0);
 
         isUseSound = pref.getBoolean("useSound", true);
         isUseNarration = pref.getBoolean("useNarration", true);
         isUseWDSound = pref.getBoolean("useWDSound", true);
+        whichLanguage = pref.getInt("language_preference", 0);
+        whichMode = pref.getInt("mode_preference", 0);
 
-//        Toast.makeText(MainActivity.this, "isUseSound : "+ isUseSound, Toast.LENGTH_LONG).show();
+        changeSetting(whichLanguage, whichMode); //초기 설정값에 따라 설정해줌
 
-        getSupportActionBar().setElevation(200);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        getSupportActionBar().setElevation(150);
+        //getSupportActionBar().setDisplayUseLogoEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.drawable.pastel);
-
+        //getSupportActionBar().setLogo(R.drawable.pastel);
 
         cameraView = (CameraView) findViewById(R.id.cameraView);
         imageViewResult = (ImageView) findViewById(R.id.imageViewResult);
@@ -130,6 +142,7 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
                 }
                 textViewResult.setText((tempstr));
 
+                isUseWDSound = pref.getBoolean("useWDSound", true);
                     if (results.isEmpty() != true) {
                         textKRViewResult.setText(results.get(0).toKRString());
                         if (isUseSound && isUseWDSound)
@@ -147,17 +160,9 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
             @Override
             public void onClick(View v) {
                 cameraView.captureImage();
-                Log.i("kaka", "0번 지점");
             }
         });
 
-//        btnToggleCamera.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//                cameraView.toggleFacing();
-//                Log.i("kaka", "00번 지점");
-//            }
-//        });
 
         textLincense.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -273,7 +278,51 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
         myTTS.speak(text, TextToSpeech.QUEUE_FLUSH, map);
     }
 
+    public static void changeLanguage(int i){
+        //0 -> Korean, 1 -> English
+        if(i == 1) {
+            if (MODE == 0)
+                LABEL_FILE = "file:///android_asset/imagenet_comp_graph_label_strings.txt";
+            else
+                LABEL_FILE = CUSTOM_LABEL_FILE;
 
+        }else if(i == 0){
+            if (MODE == 0)
+                LABEL_FILE = "file:///android_asset/imagenet_comp_graph_label_strings.txt";
+            else
+                LABEL_FILE = CUSTOM_LABEL_FILE;
+        }
+    }
+
+    public static void changeMode(int i){
+        //0 -> inception v3, 1 -> custom model
+        if(i == 1) {
+            MODE = 1;
+            MODEL_FILE = CUSTOM_MODEL_FILE;
+            LABEL_FILE = CUSTOM_LABEL_FILE;
+            INPUT_SIZE = 299;
+            IMAGE_MEAN = 128;
+            IMAGE_STD = 128.0f;
+            INPUT_NAME = "Mul";
+            OUTPUT_NAME = "final_result";
+            TensorFlowImageClassifier.THRESHOLD = 0.7f;
+        }else if(i == 0){
+            MODE = 0;
+            MODEL_FILE = "file:///android_asset/tensorflow_inception_graph.pb";
+            LABEL_FILE = "file:///android_asset/imagenet_comp_graph_label_strings.txt";
+            INPUT_SIZE = 224;//224
+            IMAGE_MEAN = 117;//117
+            IMAGE_STD = 1;//1
+            INPUT_NAME = "input";
+            OUTPUT_NAME = "output";
+            TensorFlowImageClassifier.THRESHOLD = 0.1f;
+        }
+    }
+
+    private static void changeSetting(int lang, int mode){
+        changeLanguage(lang);
+        changeMode(mode);
+    }
 
 
 

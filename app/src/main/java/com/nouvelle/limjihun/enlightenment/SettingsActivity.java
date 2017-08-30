@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
@@ -28,14 +29,19 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
     SharedPreferences.Editor editor;
 
     private PreferenceScreen screen;
-    private  CheckBoxPreference bool_useSound;
+    private CheckBoxPreference bool_useSound;
     private  SwitchPreference bool_useNarration;
     private  SwitchPreference bool_useWDSound;
     private Preference bool_openSource;
     private Preference bool_appInfo;
+    private ListPreference language_preference;
+    private ListPreference mode_preference;
+
     public static boolean isUseSound = true;
     public static boolean isUseNarration = true;
     public static boolean isUseWDSound = true;
+    public static String language;
+    public static String mode;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,11 +56,17 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         bool_useWDSound = (SwitchPreference) screen.findPreference("useWDSound");
         bool_openSource = (Preference) findPreference("opensource");
         bool_appInfo = (Preference) findPreference("appInfo");
+        language_preference = (ListPreference) screen.findPreference("language_preference");
+        mode_preference = (ListPreference) screen.findPreference("mode_preference");
 
         bool_useSound.setOnPreferenceChangeListener(this);
         bool_useNarration.setOnPreferenceChangeListener(this);
         bool_useWDSound.setOnPreferenceChangeListener(this);
+        language_preference.setOnPreferenceChangeListener(this);
+        mode_preference.setOnPreferenceChangeListener(this);
 //        bool_openSource.setOnPreferenceClickListener(SettingsActivity.this);
+
+
 
         bool_openSource.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -113,9 +125,6 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         });
 
 
-
-
-
     }
 
     public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -134,6 +143,16 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
             isUseWDSound = (boolean)newValue;
             editor.putBoolean("useWDSound", isUseWDSound);
 //            Toast.makeText(SettingsActivity.this, "세번째꺼 변경됨", Toast.LENGTH_LONG).show();
+        }else if(preference == language_preference){
+            language = (String)newValue;
+            editor.putInt("language_preference", Integer.parseInt(language));
+            //.changeLanguage(Integer.parseInt(language));
+            Toast.makeText(SettingsActivity.this, "다시 시작해야 설정이 적용됩니다.", Toast.LENGTH_LONG).show();
+        }else if(preference == mode_preference){
+            mode = (String)newValue;
+            //MainActivity.changeMode(Integer.parseInt(mode));
+            editor.putInt("mode_preference", Integer.parseInt(mode));
+            Toast.makeText(SettingsActivity.this, "다시 시작해야 설정이 적용됩니다.", Toast.LENGTH_LONG).show();
         }
         editor.commit();
         return true;

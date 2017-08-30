@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <PreferenceCategory android:title="설정모드">
+        <ListPreference
+            android:key="language_preference"
+            android:title="언어설정(Language)"
+            android:entries="@array/Language"
+            android:entryValues="@array/languageData"/>
+
+        <ListPreference
+            android:key="mode_preference"
+            android:title="이미지 분류모드"
+            android:summary="이미지 분류모드를 선택합니다."
+            android:entries="@array/imageMode"
+            android:entryValues="@array/modeData"/>
+
+    </PreferenceCategory>
+
+
     <PreferenceCategory android:title="음성모드">
 
         <CheckBoxPreference

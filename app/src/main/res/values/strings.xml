@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Enlightenment</string>
+    <string name="app_name">인라이튼</string>
     <string name="toggle_camera">카메라 전환</string>
     <string name="detect_object">확인하기</string>
     <string name="setting_name">설정</string>

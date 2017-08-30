@@ -18,7 +18,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
-    android:background="@drawable/background"
+    android:background="@drawable/board1"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
 
@@ -39,9 +39,6 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         >
-
-
-
 
             <com.flurgle.camerakit.CameraView xmlns:camerakit="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/cameraView"
@@ -72,11 +69,11 @@
                     android:id="@+id/textViewResult"
                     android:layout_width="match_parent"
                     android:layout_height="110dp"
-                    android:background="@drawable/board"
+                    android:layout_marginTop="5dp"
                     android:fadeScrollbars="false"
+                    android:gravity="center"
                     android:maxLines="15"
                     android:scrollbars="vertical"
-                    android:gravity="center"
                     android:textColor="@android:color/black" />
 
             </LinearLayout>
@@ -87,7 +84,7 @@
                 android:layout_gravity="center|top"
                 android:layout_marginTop="415dp"
                 android:gravity="center"
-                android:background="@drawable/pastel"
+                android:background="@drawable/text"
                 android:orientation="horizontal">
 
                 <TextView
@@ -101,7 +98,7 @@
                     android:gravity="center"
                     android:textSize="30dp"
                     android:textStyle="bold"
-                    android:text="사진을 찍어보세요!"
+                    android:text="물체를 찍어보세요!"
                     android:textColor="#0c4f76" />
 
             </LinearLayout>
@@ -118,7 +115,7 @@
 
             <Button
                 android:id="@+id/btnDetectObject"
-                android:layout_width="100dp"
+                android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:layout_marginTop="8dp"
                 android:layout_gravity="bottom|center"
