@@ -672,7 +672,7 @@ Crock Pot
 frying pan
 wok
 caldron
-커피포트
+coffee pot
 teapot
 spatula
 altar

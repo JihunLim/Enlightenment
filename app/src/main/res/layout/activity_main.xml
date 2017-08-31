@@ -124,46 +124,46 @@
     </FrameLayout>
 
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="200dp"
-            android:layout_height="match_parent"
-            android:weightSum="100"
-            android:layout_gravity="start"
-            android:background="#b2dfdb"
-            android:gravity="center_vertical">
+        <!--<LinearLayout-->
+            <!--android:orientation="vertical"-->
+            <!--android:layout_width="200dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:weightSum="100"-->
+            <!--android:layout_gravity="start"-->
+            <!--android:background="#b2dfdb"-->
+            <!--android:gravity="center_vertical">-->
 
-            <TextView
-                android:layout_weight="40"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="OSS World Challenge 2017\n   제 11회 공개SW 개발자 대회\n\n"
-                android:textStyle="bold"
-                android:textSize="15dp"
-                android:textColor="#006064"
-                />
+            <!--<TextView-->
+                <!--android:layout_weight="40"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="OSS World Challenge 2017\n   제 11회 공개SW 개발자 대회\n\n"-->
+                <!--android:textStyle="bold"-->
+                <!--android:textSize="15dp"-->
+                <!--android:textColor="#006064"-->
+                <!--/>-->
 
-            <TextView
-                android:layout_weight="50"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="* 팀명 : 드림캐쳐\n* 이름 : 임지훈, 김정훈\n"
-                android:textStyle="bold"
-                android:textSize="13dp"
-                android:textColor="#006064"
-                />
+            <!--<TextView-->
+                <!--android:layout_weight="50"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="* 팀명 : 드림캐쳐\n* 이름 : 임지훈, 김정훈\n"-->
+                <!--android:textStyle="bold"-->
+                <!--android:textSize="13dp"-->
+                <!--android:textColor="#006064"-->
+                <!--/>-->
 
-            <TextView
-                android:id = "@+id/license"
-                android:layout_weight="10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:layout_marginBottom="5dp"
-                android:text="오픈소스 라이선스"
-                android:textColor="#304ffe"/>
+            <!--<TextView-->
+                <!--android:id = "@+id/license"-->
+                <!--android:layout_weight="10"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="bottom|center"-->
+                <!--android:layout_marginBottom="5dp"-->
+                <!--android:text="오픈소스 라이선스"-->
+                <!--android:textColor="#304ffe"/>-->
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
 </android.support.v4.widget.DrawerLayout>
 

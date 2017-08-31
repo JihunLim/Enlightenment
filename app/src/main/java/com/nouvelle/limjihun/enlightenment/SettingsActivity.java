@@ -73,7 +73,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
             public boolean onPreferenceClick(Preference preference) {
                 Log.i("papa", "preference 값 : " + preference);
                 if(preference == bool_openSource){
-                    Toast.makeText(SettingsActivity.this, "네번째꺼 변경됨", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(SettingsActivity.this, "네번째꺼 변경됨", Toast.LENGTH_LONG).show();
                     Context mContext = getApplicationContext();
                     LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
 
@@ -146,7 +146,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         }else if(preference == language_preference){
             language = (String)newValue;
             editor.putInt("language_preference", Integer.parseInt(language));
-            //.changeLanguage(Integer.parseInt(language));
+            //MainActivity.changeLanguage(Integer.parseInt(language));
             Toast.makeText(SettingsActivity.this, "다시 시작해야 설정이 적용됩니다.", Toast.LENGTH_LONG).show();
         }else if(preference == mode_preference){
             mode = (String)newValue;

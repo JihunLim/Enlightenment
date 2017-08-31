@@ -1,24 +1,24 @@
 package com.nouvelle.limjihun.enlightenment;
 
-import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +27,7 @@ import com.flurgle.camerakit.CameraView;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -68,31 +69,81 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
     private int whichMode;
 
 
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
-
-        if (itemId == R.id.action_setting) {
-            Intent SettingActivity = new Intent(this, SettingsActivity.class);
-            startActivity(SettingActivity);
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-
-//        Intent SettingActivity = new Intent(this, SettingsActivity.class);
-//        startActivity(SettingActivity);
-        return true;
-    }
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int itemId = item.getItemId();
+//
+//        if (itemId == R.id.action_setting) {
+//            Intent SettingActivity = new Intent(this, SettingsActivity.class);
+//            startActivity(SettingActivity);
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
+//
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu){
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.menu, menu);
+//
+////        Intent SettingActivity = new Intent(this, SettingsActivity.class);
+////        startActivity(SettingActivity);
+//        return true;
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
+        ActionBar actionBar = getSupportActionBar();
+
+        // Custom Actionbar를 사용하기 위해 CustomEnabled을 true 시키고 필요 없는 것은 false 시킨다
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(false);			//액션바 아이콘을 업 네비게이션 형태로 표시합니다.
+        actionBar.setDisplayShowTitleEnabled(false);		//액션바에 표시되는 제목의 표시유무를 설정합니다.
+        actionBar.setDisplayShowHomeEnabled(false);			//홈 아이콘을 숨김처리합니다.
+
+        //layout을 가지고 와서 actionbar에 포팅을 시킵니다.
+        View mCustomView = LayoutInflater.from(this).inflate(R.layout.actionbar, null);
+        actionBar.setCustomView(mCustomView);
+
+        Toolbar parent = (Toolbar) mCustomView.getParent();
+        parent.setContentInsetsAbsolute(0,0);
+
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.argb(255,255,255,255)));
+
+        ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
+        actionBar.setCustomView(mCustomView, params);
+
+        // 액션바에 백그라운드 이미지를 아래처럼 입힐 수 있습니다. (drawable 폴더에 img_action_background.png 파일이 있어야 겠죠?)
+        //actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.img_action_background));
+
+        //showNotiPannel = false;
+        ImageButton btn_back = (ImageButton) findViewById(R.id.exit);
+        ImageButton btn_setting = (ImageButton) findViewById(R.id.setting);
+
+        btn_back.setOnClickListener(
+                new Button.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //종료
+                        finish();
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                    }
+                }
+        );
+
+        btn_setting.setOnClickListener(
+                new Button.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //설정
+                        Intent SettingActivity = new Intent(MainActivity.this, SettingsActivity.class);
+                        startActivity(SettingActivity);
+                    }
+                }
+        );
+
         pref = getSharedPreferences("settings", 0);
 
         isUseSound = pref.getBoolean("useSound", true);
@@ -103,18 +154,13 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
 
         changeSetting(whichLanguage, whichMode); //초기 설정값에 따라 설정해줌
 
-        getSupportActionBar().setElevation(150);
-        //getSupportActionBar().setDisplayUseLogoEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        //getSupportActionBar().setLogo(R.drawable.pastel);
-
         cameraView = (CameraView) findViewById(R.id.cameraView);
         imageViewResult = (ImageView) findViewById(R.id.imageViewResult);
         textViewResult = (TextView) findViewById(R.id.textViewResult);
         textViewResult.setMovementMethod(new ScrollingMovementMethod());
         //btnToggleCamera = (Button) findViewById(R.id.btnToggleCamera);
         btnDetectObject = (Button) findViewById(R.id.btnDetectObject);
-        textLincense = (TextView) findViewById(R.id.license);
+        //textLincense = (TextView) findViewById(R.id.license);
         textKRViewResult = (TextView) findViewById(R.id.textKRViewResult);
         myTTS = new TextToSpeech(this, this);
 
@@ -148,11 +194,16 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
                         if (isUseSound && isUseWDSound)
                             ttsForWord(results.get(0).toKRString());
                     } else {
-                        textKRViewResult.setText("다시 한번 찍어주세요.");
-                        if (isUseSound && isUseWDSound)
-                            ttsForWord("물체를 인식하지 못했어요. 다시한번 찍어주세요.");
+                        if (whichLanguage == 0) {
+                            textKRViewResult.setText("다시 한번 찍어주세요.");
+                            if (isUseSound && isUseWDSound)
+                                ttsForWord("물체를 인식하지 못했어요. 다시한번 찍어주세요.");
+                        } else {
+                            textKRViewResult.setText("Please take a picture, again.");
+                            if (isUseSound && isUseWDSound)
+                                ttsForWord("I can not recognize object. Please take a picture, again.");
+                        }
                     }
-
             }
         });
 
@@ -163,31 +214,31 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
             }
         });
 
-
-        textLincense.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context mContext = getApplicationContext();
-                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
-
-                //R.layout.dialog는 xml 파일명이고  R.id.popup은 보여줄 레이아웃 아이디
-                View layout = inflater.inflate(R.layout.opensource_license, (ViewGroup) findViewById(R.id.popup));
-                AlertDialog.Builder aDialog = new AlertDialog.Builder(MainActivity.this);
-
-                aDialog.setTitle("오픈소스 라이선스");
-                aDialog.setView(layout);
-
-//                //그냥 닫기버튼을 위한 부분
-//                aDialog.setNegativeButton("닫기", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//                    }
-//                });
-                //팝업창 생성
-                AlertDialog ad = aDialog.create();
-                ad.show();
-
-            }
-        });
+//
+//        textLincense.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Context mContext = getApplicationContext();
+//                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
+//
+//                //R.layout.dialog는 xml 파일명이고  R.id.popup은 보여줄 레이아웃 아이디
+//                View layout = inflater.inflate(R.layout.opensource_license, (ViewGroup) findViewById(R.id.popup));
+//                AlertDialog.Builder aDialog = new AlertDialog.Builder(MainActivity.this);
+//
+//                aDialog.setTitle("오픈소스 라이선스");
+//                aDialog.setView(layout);
+//
+////                //그냥 닫기버튼을 위한 부분
+////                aDialog.setNegativeButton("닫기", new DialogInterface.OnClickListener() {
+////                    public void onClick(DialogInterface dialog, int which) {
+////                    }
+////                });
+//                //팝업창 생성
+//                AlertDialog ad = aDialog.create();
+//                ad.show();
+//
+//            }
+//        });
 
         initTensorFlowAndLoadModel();
     }
@@ -265,8 +316,17 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
      */
     @Override
     public void onInit(int status) {
+        String spk_intro;
         if (isUseSound && isUseNarration) {
-            String spk_intro = "안녕하세요. 물체의 사진을 찍으면 해당 물체의 단어를 알려주는 학습용 어플입니다. 해당 내레이션은 왼쪽 메뉴 탭에서 설정할 수 있습니다.";
+            if (whichLanguage == 0) {
+                myTTS.setLanguage(Locale.KOREA);
+                spk_intro = "안녕하세요. 물체의 사진을 찍으면 해당 물체의 단어를 알려주는 학습용 어플입니다.  촬영버튼은 스마트폰 맨 밑부분에 있으며, 물체와 적절한 거리를 유지한 상태로 촬영해 주시기 바랍니다. 해당 내레이션은 설정에서 해재할 수 있습니다.";
+            }
+            else {
+                myTTS.setLanguage(Locale.US);
+                spk_intro = "This is the application for studying word of object you want to know. Picture button is below the phone, and take a picture at proper distance for object. You can turn off the Narration mode in setting menu.";
+            }
+
             myTTS.speak(spk_intro, TextToSpeech.QUEUE_FLUSH, null);
         }
     }
@@ -275,6 +335,10 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
     private void ttsForWord(String text) {
         HashMap<String, String> map = new HashMap<>();
         map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
+        if (whichLanguage == 0)
+            myTTS.setLanguage(Locale.KOREA);
+        else
+            myTTS.setLanguage(Locale.US);
         myTTS.speak(text, TextToSpeech.QUEUE_FLUSH, map);
     }
 
@@ -288,7 +352,7 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
 
         }else if(i == 0){
             if (MODE == 0)
-                LABEL_FILE = "file:///android_asset/imagenet_comp_graph_label_strings.txt";
+                LABEL_FILE = "file:///android_asset/imagenet_comp_graph_label_strings_kr.txt";
             else
                 LABEL_FILE = CUSTOM_LABEL_FILE;
         }
@@ -320,11 +384,9 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
     }
 
     private static void changeSetting(int lang, int mode){
-        changeLanguage(lang);
+        Log.i("debug", "lang , mode -> "+lang+" , "+mode);
         changeMode(mode);
+        changeLanguage(lang);
     }
-
-
-
 
 }
