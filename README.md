@@ -1,4 +1,9 @@
 # Enlightenment
+
+![ex_screenshot](./img/screenshot.png)
+
+
+
 Open Source Code Contest
  * 오픈 소스 저작권 정보\n- 이 프로그램에 사용된 라이브러리는 http://www.apache.org/licenses/LICENSE-2.0에 공개된 소스코드 기반으로 사용하였으며, Apache 2.0 License을 따릅니다.\n- 이 프로그램에 사용된 CameraKit-Android 라이브러리는 https://github.com/gogopop/CameraKit-Android에 공개된 소스코드 기반으로 사용하였으며, MIT License를 따릅니다.\n* 이 프로그램은 OSS World Challenge 2017 제 11회 공개SW 개발자 대회의 드림캐쳐(세종대 임지훈, 세종대 김정훈) 팀의 출품작으로 대회 정책에 따라 오픈소스코드임을 알려드립니다.\n다만 오픈소스 라이선스 기재는 필수입니다.\n\n Copyright (C) DREAMCATCHER TEAM
 - This product contains android-support-v4 library, which can be downloaded from https://github.com/android/platform_frameworks_support/. This library includes the following license and notice below:Copyright (C) 2011 The Android Open Source Projecthttps://android.googlesource.com/platform/frameworks/support.git/+/master/v4/Android.mk/Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
