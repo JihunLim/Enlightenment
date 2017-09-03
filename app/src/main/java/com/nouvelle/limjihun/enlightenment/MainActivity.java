@@ -21,17 +21,26 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.flurgle.camerakit.CameraListener;
 import com.flurgle.camerakit.CameraView;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
-public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnInitListener{
+public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnInitListener {
 
     private static int INPUT_SIZE = 224;//224
     private static int IMAGE_MEAN = 117;//117
@@ -48,8 +57,8 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
     private static String MODEL_FILE = "file:///android_asset/tensorflow_inception_graph.pb";
     private static String LABEL_FILE = "file:///android_asset/imagenet_comp_graph_label_strings.txt";
 
-    private static final String CUSTOM_MODEL_FILE = "file:///android_asset/optimized_graph.pb";
-    private static final String CUSTOM_LABEL_FILE = "file:///android_asset/retrained_labels.txt";
+    private static final String CUSTOM_MODEL_FILE = "file:///android_asset/dreamcatcher_v3.pb";
+    private static final String CUSTOM_LABEL_FILE = "file:///android_asset/dreamcatcher_v3_labels.txt";
 
     private Classifier classifier;
     private Executor executor = Executors.newSingleThreadExecutor();
@@ -68,49 +77,28 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
     private int whichLanguage;
     private int whichMode;
 
-
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int itemId = item.getItemId();
-//
-//        if (itemId == R.id.action_setting) {
-//            Intent SettingActivity = new Intent(this, SettingsActivity.class);
-//            startActivity(SettingActivity);
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
-//
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu){
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.menu, menu);
-//
-////        Intent SettingActivity = new Intent(this, SettingsActivity.class);
-////        startActivity(SettingActivity);
-//        return true;
-//    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
+        unpackZip("file:///android_asset/", "dreamcatcher_v3.zip");
         ActionBar actionBar = getSupportActionBar();
 
         // Custom Actionbar를 사용하기 위해 CustomEnabled을 true 시키고 필요 없는 것은 false 시킨다
         actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(false);			//액션바 아이콘을 업 네비게이션 형태로 표시합니다.
-        actionBar.setDisplayShowTitleEnabled(false);		//액션바에 표시되는 제목의 표시유무를 설정합니다.
-        actionBar.setDisplayShowHomeEnabled(false);			//홈 아이콘을 숨김처리합니다.
+        actionBar.setDisplayHomeAsUpEnabled(false);            //액션바 아이콘을 업 네비게이션 형태로 표시합니다.
+        actionBar.setDisplayShowTitleEnabled(false);        //액션바에 표시되는 제목의 표시유무를 설정합니다.
+        actionBar.setDisplayShowHomeEnabled(false);            //홈 아이콘을 숨김처리합니다.
 
         //layout을 가지고 와서 actionbar에 포팅을 시킵니다.
         View mCustomView = LayoutInflater.from(this).inflate(R.layout.actionbar, null);
         actionBar.setCustomView(mCustomView);
 
         Toolbar parent = (Toolbar) mCustomView.getParent();
-        parent.setContentInsetsAbsolute(0,0);
+        parent.setContentInsetsAbsolute(0, 0);
 
-        actionBar.setBackgroundDrawable(new ColorDrawable(Color.argb(255,255,255,255)));
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.argb(255, 255, 255, 255)));
 
         ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
         actionBar.setCustomView(mCustomView, params);
@@ -189,21 +177,21 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
                 textViewResult.setText((tempstr));
 
                 isUseWDSound = pref.getBoolean("useWDSound", true);
-                    if (results.isEmpty() != true) {
-                        textKRViewResult.setText(results.get(0).toKRString());
+                if (results.isEmpty() != true) {
+                    textKRViewResult.setText(results.get(0).toKRString());
+                    if (isUseSound && isUseWDSound)
+                        ttsForWord(results.get(0).toKRString());
+                } else {
+                    if (whichLanguage == 0) {
+                        textKRViewResult.setText("다시 한번 찍어주세요.");
                         if (isUseSound && isUseWDSound)
-                            ttsForWord(results.get(0).toKRString());
+                            ttsForWord("물체를 인식하지 못했어요. 다시한번 찍어주세요.");
                     } else {
-                        if (whichLanguage == 0) {
-                            textKRViewResult.setText("다시 한번 찍어주세요.");
-                            if (isUseSound && isUseWDSound)
-                                ttsForWord("물체를 인식하지 못했어요. 다시한번 찍어주세요.");
-                        } else {
-                            textKRViewResult.setText("Please take a picture, again.");
-                            if (isUseSound && isUseWDSound)
-                                ttsForWord("I can not recognize object. Please take a picture, again.");
-                        }
+                        textKRViewResult.setText("Please take a picture, again.");
+                        if (isUseSound && isUseWDSound)
+                            ttsForWord("I can not recognize object. Please take a picture, again.");
                     }
+                }
             }
         });
 
@@ -213,32 +201,6 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
                 cameraView.captureImage();
             }
         });
-
-//
-//        textLincense.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Context mContext = getApplicationContext();
-//                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
-//
-//                //R.layout.dialog는 xml 파일명이고  R.id.popup은 보여줄 레이아웃 아이디
-//                View layout = inflater.inflate(R.layout.opensource_license, (ViewGroup) findViewById(R.id.popup));
-//                AlertDialog.Builder aDialog = new AlertDialog.Builder(MainActivity.this);
-//
-//                aDialog.setTitle("오픈소스 라이선스");
-//                aDialog.setView(layout);
-//
-////                //그냥 닫기버튼을 위한 부분
-////                aDialog.setNegativeButton("닫기", new DialogInterface.OnClickListener() {
-////                    public void onClick(DialogInterface dialog, int which) {
-////                    }
-////                });
-//                //팝업창 생성
-//                AlertDialog ad = aDialog.create();
-//                ad.show();
-//
-//            }
-//        });
 
         initTensorFlowAndLoadModel();
     }
@@ -267,7 +229,7 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
         myTTS.shutdown();
     }
 
-    private void initTensorFlowAndLoadModel(){
+    private void initTensorFlowAndLoadModel() {
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -282,14 +244,14 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
                             INPUT_NAME,
                             OUTPUT_NAME);
                     makeButtonVisible();
-                } catch (final Exception e){
+                } catch (final Exception e) {
                     throw new RuntimeException("Error", e);
                 }
             }
         });
     }
 
-    private void makeButtonVisible(){
+    private void makeButtonVisible() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -298,7 +260,7 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
         });
     }
 
-    private Bitmap imgRotate(Bitmap bmp){
+    private Bitmap imgRotate(Bitmap bmp) {
 
         int width = bmp.getWidth();
         int height = bmp.getHeight();
@@ -321,8 +283,7 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
             if (whichLanguage == 0) {
                 myTTS.setLanguage(Locale.KOREA);
                 spk_intro = "안녕하세요. 물체의 사진을 찍으면 해당 물체의 단어를 알려주는 학습용 어플입니다.  촬영버튼은 스마트폰 맨 밑부분에 있으며, 물체와 적절한 거리를 유지한 상태로 촬영해 주시기 바랍니다. 해당 내레이션은 설정에서 해재할 수 있습니다.";
-            }
-            else {
+            } else {
                 myTTS.setLanguage(Locale.US);
                 spk_intro = "This is the application for studying word of object you want to know. Picture button is below the phone, and take a picture at proper distance for object. You can turn off the Narration mode in setting menu.";
             }
@@ -342,25 +303,25 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
         myTTS.speak(text, TextToSpeech.QUEUE_FLUSH, map);
     }
 
-    public static void changeLanguage(int i){
+    public static void changeLanguage(int i) {
         //0 -> Korean, 1 -> English
-        if(i == 1) {
+        if (i == 1) {
             if (MODE == 0)
                 LABEL_FILE = "file:///android_asset/imagenet_comp_graph_label_strings.txt";
             else
                 LABEL_FILE = CUSTOM_LABEL_FILE;
 
-        }else if(i == 0){
+        } else if (i == 0) {
             if (MODE == 0)
                 LABEL_FILE = "file:///android_asset/imagenet_comp_graph_label_strings_kr.txt";
             else
-                LABEL_FILE = CUSTOM_LABEL_FILE;
+                LABEL_FILE = "file:///android_asset/dreamcatcher_v3_labels_kr.txt";
         }
     }
 
-    public static void changeMode(int i){
+    public static void changeMode(int i) {
         //0 -> inception v3, 1 -> custom model
-        if(i == 1) {
+        if (i == 1) {
             MODE = 1;
             MODEL_FILE = CUSTOM_MODEL_FILE;
             LABEL_FILE = CUSTOM_LABEL_FILE;
@@ -370,7 +331,7 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
             INPUT_NAME = "Mul";
             OUTPUT_NAME = "final_result";
             TensorFlowImageClassifier.THRESHOLD = 0.7f;
-        }else if(i == 0){
+        } else if (i == 0) {
             MODE = 0;
             MODEL_FILE = "file:///android_asset/tensorflow_inception_graph.pb";
             LABEL_FILE = "file:///android_asset/imagenet_comp_graph_label_strings.txt";
@@ -383,10 +344,59 @@ public class MainActivity extends AppCompatActivity  implements TextToSpeech.OnI
         }
     }
 
-    private static void changeSetting(int lang, int mode){
-        Log.i("debug", "lang , mode -> "+lang+" , "+mode);
+    private static void changeSetting(int lang, int mode) {
+        Log.i("debug", "lang , mode -> " + lang + " , " + mode);
         changeMode(mode);
         changeLanguage(lang);
     }
 
+    private boolean unpackZip(String path, String zipname)
+    {
+        InputStream is;
+        ZipInputStream zis;
+        try
+        {
+            String filename;
+            is = new FileInputStream(path + zipname);
+            zis = new ZipInputStream(new BufferedInputStream(is));
+            ZipEntry ze;
+            byte[] buffer = new byte[1024];
+            int count;
+
+            while ((ze = zis.getNextEntry()) != null)
+            {
+                // zapis do souboru
+                filename = ze.getName();
+
+                // Need to create directories if not exists, or
+                // it will generate an Exception...
+                if (ze.isDirectory()) {
+                    File fmd = new File(path + filename);
+                    fmd.mkdirs();
+                    Toast.makeText(this, "압축 위치 : "+path+" ,"+filename, Toast.LENGTH_LONG).show();
+                    continue;
+                }
+
+                FileOutputStream fout = new FileOutputStream(path + filename);
+
+                // cteni zipu a zapis
+                while ((count = zis.read(buffer)) != -1)
+                {
+                    fout.write(buffer, 0, count);
+                }
+
+                fout.close();
+                zis.closeEntry();
+            }
+
+            zis.close();
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
 }
