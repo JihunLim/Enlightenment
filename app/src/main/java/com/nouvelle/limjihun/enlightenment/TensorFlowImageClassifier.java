@@ -78,6 +78,7 @@ public class TensorFlowImageClassifier implements Classifier {
                         throw new RuntimeException("Initializing Tensorflow is failed!");
                     }
 
+
                     // The shape of the output is [N, NUM_CLASSES], where N is the batch size.
                     int numClasses =
                             (int) c.inferenceInterface.graph().operation(outputName).output(0).shape().size(1);
