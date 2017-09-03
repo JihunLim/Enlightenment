@@ -1,6 +1,6 @@
 # Enlightenment
 
-![ex_screenshot](./img/screenshot.png)
+![ex_screenshot](graphics.png)
 
 
 
