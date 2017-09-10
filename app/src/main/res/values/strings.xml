@@ -1,19 +1,32 @@
+<!--
+  ~    Copyright (C) 2017 Hooni Nouvelle Indi Developer
+  ~
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
+  -->
 <resources>
     <string name="app_name">인라이튼</string>
     <string name="toggle_camera">카메라 전환</string>
     <string name="detect_object">확인하기</string>
     <string name="setting_name">설정</string>
     <string name="appinfo">
-        앱 정보입니다.
-
-
+        시각장애인들에게 시야를 준다는 의미로 이름을 붙인 ‘인라이튼’ 어플리케이션은 시각장애인들이 물체를 익히고 학습하는데 있어서 물체에 대한 이름, 특징, 색을 스스로 보고 학습하는데 많은 제약사항이 있기 때문에, 물체를 학습하기 위해서는 주변에 도와주는 사람이 함께 자리해서 만지고 있는 물체에 대한 단어를 알려줘야만 한다. 또한 꼭 시각장애인이 아니여도 어린 아이들이 물체를 학습하는데 있어서 어떤 물체에 대한 단어를 모르는 상황이 발생할 수 있다. 물체 학습 프로그램인 ‘인라이튼’ 어플은 이러한 상황을 해결해 줄 수 있는 학습용 어플이다. 시각장애인 또는 어린 아이들이 옆에 도와주는 사람 없어도 자신이 만지고 있는 물체나 처음 보는 물체를 ‘인라이튼’ 어플을 통해서 비추면 이 물체의 단어를 알려준다. 또한 시각장애인을 위해서 음성모드를 지원하며 언어도 한국어 또는 영어를 설정메뉴에서 선택할 수 있다.
     </string>
     <string name="opensouce_license">
         * 오픈 소스 저작권 정보\n
 - 이 프로그램에 사용된 라이브러리는 http://www.apache.org/licenses/LICENSE-2.0에 공개된 소스코드 기반으로 사용하였으며, Apache 2.0 License을 따릅니다.\n
 - 이 프로그램에 사용된 CameraKit-Android 라이브러리는 https://github.com/gogopop/CameraKit-Android에 공개된 소스코드 기반으로 사용하였으며, MIT License를 따릅니다.\n
 * 이 프로그램은 OSS World Challenge 2017 제 11회 공개SW 개발자 대회의 드림캐쳐(세종대 임지훈, 세종대 김정훈) 팀의 출품작으로 대회 정책에 따라 오픈소스코드임을 알려드립니다.\n다만 오픈소스 라이선스 기재는 필수입니다.\n\n
- Copyright (C) 2017 MINDORKS NEXTGEN PRIVATE LIMITED
+ Copyright (C) DREAMCATCHER TEAM
 
 
 - This product contains android-support-v4 library, which can be downloaded from https://github.com/android/platform_frameworks_support/. This library includes the following license and notice below:
